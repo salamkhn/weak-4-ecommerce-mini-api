@@ -12,7 +12,6 @@ const productSchema = new mongoose.Schema(
     },
     productImage: {
       type: String,
-      required: [true, "productImage required"],
     },
     isFeatured: {
       type: Boolean,
