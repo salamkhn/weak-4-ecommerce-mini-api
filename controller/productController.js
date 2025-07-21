@@ -5,8 +5,8 @@ import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 cloudinary.config({
   cloud_name: "djboaeuys",
-  api_key: "297579552564668",
-  api_secret: "PIx5qMF_9Q_jvrAQPbTsgTju3Ok",
+  api_key: process.env.API_key,
+  api_secret: process.env.API_SECTET,
 });
 export const addProduct = async (req, res, next) => {
   const { productName, price, isFeatured, productWeight, rating, company } =
@@ -29,7 +29,7 @@ export const addProduct = async (req, res, next) => {
     });
   }
   try {
-    //multer setup
+    //Cloudinary set ups
     let productDetail;
     const file = req.files.productImage;
     await cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
@@ -45,8 +45,7 @@ export const addProduct = async (req, res, next) => {
       });
     });
 
-    //save to dbs
-
+    //success status
     return res.status(201).json({
       message: "product stored successfully",
       productDetail,
@@ -58,20 +57,69 @@ export const addProduct = async (req, res, next) => {
 
 // show all-products
 
-export const showallProducts = async (req, res) => {
+export const showallProducts = async (req, res, next) => {
   try {
-    const allProducts = await product.find({});
+    let {
+      page,
+      limit = 3,
+      productName,
+      price,
+      isFeatured,
+      productWeight,
+      rating,
+      company,
+    } = req.query;
 
-    console.log("allProducts :", addProduct);
+    console.log("page in query :", req.query);
+
+    //converting in to Numerbs
+    let skip;
+    page = Number(page);
+    limit = Number(limit);
+    skip = (page - 1) * limit;
+
+    //mading query object so that we can easily manipulate
+    const queryObject = {};
+    let allProducts;
+
+    if (page) {
+      console.log("page :", page);
+      console.log("limit :", limit);
+      console.log("skip :", skip);
+    }
+    if (productName) {
+      queryObject.productName = { $regex: productName, $options: "i" };
+    }
+    if (price) {
+      queryObject.price = Number(price);
+    }
+    if (isFeatured) {
+      queryObject.isFeatured = isFeatured === true;
+    }
+    if (productWeight) {
+      queryObject.productWeight = Number(productWeight);
+    }
+    if (rating) {
+      queryObject.rating = Number(rating);
+    }
+    if (company) {
+      queryObject.company = { $regex: company, $options: "i" };
+    }
+
+    allProducts = page
+      ? (allProducts = await product.find().skip(skip).limit(limit))
+      : await product.find(queryObject);
+
+    console.log("allProducts :", allProducts);
 
     if (!allProducts || allProducts.length == 0) {
       return res.status(400).json({
-        message: "not any product found",
+        message: "product not found",
         success: false,
       });
     }
 
-    console.log("all-products :", allProducts);
+    // success status
     return res.status(200).json({
       message: "these all products found",
       allProducts,
