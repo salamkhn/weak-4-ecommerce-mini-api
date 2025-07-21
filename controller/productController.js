@@ -3,12 +3,9 @@ import { product } from "../model/productModel.js";
 import path from "path";
 
 import { v2 as cloudinary } from "cloudinary";
-cloudinary.config({
-  cloud_name: "djboaeuys",
-  api_key: process.env.API_key,
-  api_secret: process.env.API_SECTET,
-});
+
 export const addProduct = async (req, res, next) => {
+  console.log("hello salma kasa huu app");
   const { productName, price, isFeatured, productWeight, rating, company } =
     req.body;
 
@@ -30,6 +27,13 @@ export const addProduct = async (req, res, next) => {
   }
   try {
     //Cloudinary set ups
+    cloudinary.config({
+      cloud_name: "djboaeuys",
+      api_key: process.env.APIKEY,
+      api_secret: process.env.APISECRETE,
+    });
+
+    console.log("process from contriller.js :", process.env.APIKEY);
     let productDetail;
     const file = req.files.productImage;
     await cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {

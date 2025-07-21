@@ -12,7 +12,7 @@ export const productRouter = Router();
 // @add product
 // @method =>post
 // @endpoing =>"/api/product/add"
-productRouter.post("/addproducts", addProduct);
+productRouter.post("/addproduct", addProduct);
 
 // @show showallProducts
 // @method =>get
