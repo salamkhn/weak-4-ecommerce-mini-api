@@ -53,6 +53,7 @@ export const addProduct = async (req, res, next) => {
     return res.status(201).json({
       message: "product stored successfully",
       productDetail,
+      success:true
     });
   } catch (err) {
     next(err);
@@ -114,7 +115,6 @@ export const showallProducts = async (req, res, next) => {
       ? (allProducts = await product.find().skip(skip).limit(limit))
       : await product.find(queryObject);
 
-    console.log("allProducts :", allProducts);
 
     if (!allProducts || allProducts.length == 0) {
       return res.status(400).json({
@@ -125,9 +125,9 @@ export const showallProducts = async (req, res, next) => {
 
     // success status
     return res.status(200).json({
-      message: "these all products found",
+      message: "products found",
       allProducts,
-      success: true,
+      success: tru
     });
   } catch (err) {
     next(err);

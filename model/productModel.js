@@ -42,6 +42,7 @@ const productSchema = new mongoose.Schema(
           "zara",
           "nokia",
           "niki",
+          "nokia",
         ],
         message: (props) => `${props.value} is not supported`,
       },
